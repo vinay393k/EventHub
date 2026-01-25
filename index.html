@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventHub | Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-gray-50 text-gray-900">
+
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md border-b border-gray-100 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="switchView('landing')">
+                        <i data-lucide="calendar" class="h-8 w-8 text-indigo-600"></i>
+                        <span class="ml-2 text-xl font-bold text-gray-900 tracking-tight">EventHub</span>
+                    </div>
+                </div>
+                
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex items-center space-x-6">
+                    <button onclick="switchView('landing')" class="nav-link text-sm font-medium text-gray-600 hover:text-indigo-600 transition" id="nav-browse">Browse Events</button>
+                    <button onclick="switchView('dashboard')" class="nav-link hidden text-sm font-medium text-gray-600 hover:text-indigo-600 transition" id="nav-dashboard">My Registrations</button>
+                    <button onclick="switchView('admin')" class="nav-link hidden text-sm font-medium text-gray-600 hover:text-indigo-600 transition" id="nav-admin">Admin Panel</button>
+                    
+                    <div class="h-6 w-px bg-gray-200"></div>
+                    
+                    <div id="auth-buttons" class="flex items-center space-x-3">
+                        <button onclick="handleLogin('user')" class="text-sm font-medium text-gray-600 hover:text-indigo-600 px-3 py-2 transition">Student Login</button>
+                        <button onclick="handleLogin('admin')" class="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-700 transition shadow-md shadow-indigo-100 active:scale-95">Admin Access</button>
+                    </div>
+
+                    <div id="user-profile" class="hidden flex items-center space-x-4">
+                        <div class="flex items-center space-x-2 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
+                            <div id="user-icon-container" class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700">
+                                <i data-lucide="user" class="w-3 h-3"></i>
+                            </div>
+                            <span id="user-display-name" class="text-xs font-bold text-gray-700">User</span>
+                        </div>
+                        <button onclick="handleLogout()" class="text-gray-400 hover:text-red-500 transition p-2 rounded-xl hover:bg-red-50">
+                            <i data-lucide="log-out" class="w-5 h-5"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button onclick="toggleMobileMenu()" class="text-gray-500 hover:text-gray-600 p-2">
+                        <i data-lucide="menu" id="menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-white border-b border-gray-200 px-4 py-4 space-y-4 shadow-xl">
+        <button onclick="switchView('landing'); toggleMobileMenu();" class="block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md">Browse Events</button>
+        <button id="mobile-nav-dashboard" onclick="switchView('dashboard'); toggleMobileMenu();" class="hidden block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md">My Registrations</button>
+        <button id="mobile-nav-admin" onclick="switchView('admin'); toggleMobileMenu();" class="hidden block w-full text-left px-3 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 rounded-md">Admin Dashboard</button>
+        <div id="mobile-auth" class="pt-4 border-t border-gray-100 grid grid-cols-2 gap-4">
+            <button onclick="handleLogin('user')" class="w-full text-center py-2 text-indigo-600 font-medium">Student Login</button>
+            <button onclick="handleLogin('admin')" class="w-full text-center py-2 bg-indigo-600 text-white rounded-md font-medium">Admin</button>
+        </div>
+        <button id="mobile-logout" onclick="handleLogout()" class="hidden w-full text-center py-2 text-red-600 font-medium border-t border-gray-100 pt-4">Logout</button>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="min-h-screen">
+        
+        <!-- View: Landing (Browse Events) -->
+        <section id="view-landing" class="view-section">
+            
+            <!-- NEW HERO SECTION -->
+            <div class="relative bg-white overflow-hidden border-b border-gray-100">
+                <div class="max-w-7xl mx-auto">
+                    <div class="relative z-10 pb-8 bg-white sm:pb-16 md:pb-20 lg:max-w-2xl lg:w-full lg:pb-28 xl:pb-32">
+                        <!-- Background shape for desktop -->
+                        <svg class="hidden lg:block absolute right-0 inset-y-0 h-full w-48 text-white transform translate-x-1/2" fill="currentColor" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                            <polygon points="50,0 100,0 50,100 0,100" />
+                        </svg>
+
+                        <div class="pt-10 mx-auto max-w-7xl px-4 sm:pt-12 sm:px-6 md:pt-16 lg:pt-20 lg:px-8 xl:pt-28">
+                            <div class="sm:text-center lg:text-left animate-fade-in">
+                                <h1 class="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+                                    <span class="block xl:inline">Empower your campus</span>
+                                    <span class="block text-indigo-600 xl:inline">experience today</span>
+                                </h1>
+                                <p class="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0 leading-relaxed">
+                                    Join thousands of students in discovering workshops, sports events, and cultural fests. Seamlessly manage your registrations and stay updated with everything happening on campus.
+                                </p>
+                                <div class="mt-8 sm:flex sm:justify-center lg:justify-start gap-4">
+                                    <div class="rounded-xl shadow">
+                                        <button onclick="handleLogin('user')" class="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-bold rounded-xl text-white bg-indigo-600 hover:bg-indigo-700 md:py-4 md:text-lg md:px-10 transition-all shadow-lg shadow-indigo-100 active:scale-95">
+                                            Get Started
+                                        </button>
+                                    </div>
+                                    <div class="mt-3 sm:mt-0">
+                                        <a href="#browse-section" class="w-full flex items-center justify-center px-8 py-3 border border-gray-200 text-base font-bold rounded-xl text-indigo-700 bg-indigo-50 hover:bg-indigo-100 md:py-4 md:text-lg md:px-10 transition-all">
+                                            View Events
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="mt-10 flex items-center space-x-6 text-sm text-gray-400 sm:justify-center lg:justify-start">
+                                    <div class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i> Free Access</div>
+                                    <div class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i> Easy Registration</div>
+                                    <div class="flex items-center"><i data-lucide="check" class="w-4 h-4 mr-2 text-green-500"></i> E-Certificates</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="lg:absolute lg:inset-y-0 lg:right-0 lg:w-1/2">
+                    <img class="h-56 w-full object-cover sm:h-72 md:h-96 lg:w-full lg:h-full hero-clip" src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&q=80&w=1200" alt="Students in campus event">
+                </div>
+            </div>
+
+            <!-- Browse Section -->
+            <div id="browse-section" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div class="mb-12 md:flex md:items-end md:justify-between space-y-4 md:space-y-0">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900">Upcoming Events</h2>
+                        <p class="mt-2 text-gray-500">Explore and join events that matter to you.</p>
+                    </div>
+                    <div class="relative w-full md:w-80">
+                        <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4"></i>
+                        <input 
+                            type="text" 
+                            id="search-input"
+                            oninput="handleSearch(this.value)"
+                            placeholder="Search events or categories..." 
+                            class="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition bg-white shadow-sm"
+                        >
+                    </div>
+                </div>
+
+                <div id="events-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Events populated by JS -->
+                </div>
+
+                <div id="empty-search" class="hidden text-center py-20 bg-white rounded-3xl border border-dashed border-gray-200">
+                    <i data-lucide="search" class="mx-auto h-12 w-12 text-gray-300 mb-4"></i>
+                    <p class="text-gray-500 text-lg font-medium">No events found matching your search.</p>
+                    <button onclick="document.getElementById('search-input').value=''; handleSearch('');" class="mt-2 text-indigo-600 hover:underline">Clear search</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: User Dashboard -->
+        <section id="view-dashboard" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+            <div class="mb-10">
+                <h1 id="welcome-message" class="text-3xl font-bold text-gray-900 tracking-tight">Welcome back!</h1>
+                <p class="text-gray-500 mt-1">Manage your registered events and schedules.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <h2 class="text-xl font-bold text-gray-900 mb-6 flex items-center">
+                        <i data-lucide="check-circle" class="mr-2 text-indigo-600 w-5 h-5"></i>
+                        My Active Registrations (<span id="reg-count">0</span>)
+                    </h2>
+                    <div id="user-events-list" class="space-y-4">
+                        <!-- User events populated by JS -->
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="bg-gradient-to-br from-indigo-600 to-indigo-700 rounded-3xl p-8 text-white shadow-xl shadow-indigo-100">
+                        <h3 class="font-bold text-lg mb-3 flex items-center">
+                            <i data-lucide="alert-circle" class="mr-2 w-5 h-5"></i>
+                            Quick Reminder
+                        </h3>
+                        <p class="text-indigo-100 text-sm leading-relaxed opacity-90">
+                            Attendance certificates are issued 48 hours after the event concludes. Ensure your profile details are up to date!
+                        </p>
+                    </div>
+                    
+                    <div class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm">
+                        <h3 class="font-bold text-gray-900 mb-4">Account Stats</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500 text-sm font-medium">Total Registered</span>
+                                <span id="stat-total" class="font-bold text-indigo-600">0</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span class="text-gray-500 text-sm font-medium">Profile Score</span>
+                                <span class="font-bold text-indigo-600">85%</span>
+                            </div>
+                            <div class="w-full bg-gray-50 rounded-full h-2 mt-4 overflow-hidden border border-gray-100">
+                                <div id="stat-progress" class="bg-indigo-600 h-2 rounded-full transition-all duration-700" style="width: 10%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- View: Admin Panel -->
+        <section id="view-admin" class="view-section hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-in">
+            <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Admin Dashboard</h1>
+                    <p class="text-gray-500 mt-1">Manage event listings and track participant data.</p>
+                </div>
+                <button 
+                    onclick="openModal()"
+                    class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 flex items-center justify-center transition shadow-lg shadow-indigo-100 active:scale-95"
+                >
+                    <i data-lucide="plus" class="mr-2 w-5 h-5"></i>
+                    Create Event
+                </button>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-100">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Event Details</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Timing</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">Status</th>
+                                <th class="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-widest">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-table-body" class="bg-white divide-y divide-gray-100">
+                            <!-- Admin rows populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-100 py-16 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <div class="flex items-center justify-center mb-8">
+                <div class="p-2.5 bg-indigo-50 rounded-2xl mr-3">
+                    <i data-lucide="calendar" class="h-6 w-6 text-indigo-600"></i>
+                </div>
+                <span class="text-2xl font-bold tracking-tighter">EventHub</span>
+            </div>
+            <p class="text-gray-400 text-sm max-w-md mx-auto leading-relaxed">
+                Empowering campus engagement through technology. The official platform for all university-wide workshops and events.
+            </p>
+            <div class="mt-10 flex flex-wrap justify-center gap-8">
+                <a href="#" class="text-gray-500 hover:text-indigo-600 text-sm font-semibold transition">Privacy</a>
+                <a href="#" class="text-gray-500 hover:text-indigo-600 text-sm font-semibold transition">Terms</a>
+                <a href="#" class="text-gray-500 hover:text-indigo-600 text-sm font-semibold transition">Support</a>
+                <a href="#" class="text-gray-500 hover:text-indigo-600 text-sm font-semibold transition">About Us</a>
+            </div>
+            <p class="mt-12 text-gray-300 text-xs font-medium tracking-widest uppercase">© 2024 EventHub CMS. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Event Form Modal -->
+    <div id="event-modal" class="hidden fixed inset-0 z-50 overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-lg shadow-2xl animate-fade-in border border-gray-100">
+            <div class="px-8 py-6 border-b border-gray-50 flex items-center justify-between">
+                <div>
+                    <h3 id="modal-title" class="text-xl font-bold text-gray-900 tracking-tight">New Event Setup</h3>
+                    <p class="text-xs text-gray-400 mt-1">Configure your event parameters.</p>
+                </div>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100 transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <form id="event-form" onsubmit="handleFormSubmit(event)" class="p-8 space-y-5">
+                <input type="hidden" id="edit-id">
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Event Title</label>
+                    <input required type="text" id="form-title" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50/50">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Date</label>
+                        <input required type="date" id="form-date" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50/50 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Time</label>
+                        <input required type="text" id="form-time" placeholder="10:00 AM" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50/50 text-sm">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Location</label>
+                        <input required type="text" id="form-location" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50/50 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-bold text-gray-700 mb-2">Category</label>
+                        <select id="form-category" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50/50 text-sm appearance-none">
+                            <option>General</option>
+                            <option>Technology</option>
+                            <option>Sports</option>
+                            <option>Workshop</option>
+                            <option>Culture</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Description</label>
+                    <textarea id="form-desc" rows="3" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition resize-none bg-gray-50/50 text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-gray-700 mb-2">Max Capacity</label>
+                    <input required type="number" id="form-capacity" class="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition bg-gray-50/50 text-sm">
+                </div>
+                <div class="pt-4 flex space-x-3">
+                    <button type="button" onclick="closeModal()" class="flex-1 px-4 py-3 border border-gray-200 rounded-xl font-bold text-gray-600 hover:bg-gray-50 transition active:scale-95">Cancel</button>
+                    <button type="submit" id="submit-btn" class="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition active:scale-95">Create Event</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Box / Toast UI -->
+    <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 bg-gray-900/90 backdrop-blur-md text-white px-8 py-4 rounded-2xl shadow-2xl z-50 flex items-center transition-all duration-300 border border-white/10">
+        <span id="toast-message" class="text-sm font-bold"></span>
+    </div>
+
+    <!-- Custom Confirmation Modal -->
+    <div id="confirm-modal" class="hidden fixed inset-0 z-[60] overflow-y-auto modal-backdrop flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl w-full max-w-sm p-8 shadow-2xl animate-fade-in text-center border border-gray-50">
+            <div class="w-20 h-20 bg-red-50 text-red-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i data-lucide="trash-2" class="w-10 h-10"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-gray-900 mb-3">Confirm Deletion</h3>
+            <p class="text-gray-500 mb-8 leading-relaxed">This event will be permanently removed. This action cannot be undone.</p>
+            <div class="flex space-x-4">
+                <button onclick="closeConfirmModal()" class="flex-1 px-4 py-3 bg-gray-50 text-gray-600 rounded-xl font-bold hover:bg-gray-100 transition">Cancel</button>
+                <button id="confirm-delete-btn" class="flex-1 px-4 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition shadow-lg shadow-red-100">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html
