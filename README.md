@@ -16,4 +16,4 @@ Database Integration: Connecting to a MongoDB/Node.js backend for persistent dat
 E-Certificates: Automated generation of PDF certificates upon event completion.
 Email Notifications: Integration with SMTP services to send registration confirmations.
 
-I provide some images in my image for preview of outcome watch image file to get idea about this repository.
+I provide some images in .png file for preview of outcome watch to get idea about this repository.
