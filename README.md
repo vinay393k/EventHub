@@ -15,3 +15,5 @@ Responsive Admin Panel: Manage the entire campus ecosystem from any device with 
 Database Integration: Connecting to a MongoDB/Node.js backend for persistent data storage.
 E-Certificates: Automated generation of PDF certificates upon event completion.
 Email Notifications: Integration with SMTP services to send registration confirmations.
+
+I provide some images in my image for preview of outcome watch image file to get idea about this repository.
